@@ -1,0 +1,32 @@
+# RTKLIB convbin build record
+# This file documents exactly what binary tools/convbin is, so the conversion
+# is reproducible. Nothing in the pipeline builds or installs anything; the
+# build below was performed once, by hand, and is recorded here.
+
+tool=convbin
+source=RTKLIB demo5 fork (rtklibexplorer/RTKLIB)
+repository=https://github.com/rtklibexplorer/RTKLIB.git
+branch=demo5
+commit=75a2e56275485b21a67bd35bc94bbeb8936e1a74
+commit_date=Sat Jul 26 08:12:32 2025 -0600
+version_string=CONVBIN demo5 b34L
+built_on=2026-09-24T01:06:05Z
+built_by=Apple clang 21.0.0
+platform=Darwin 27.0.0 arm64
+
+# Build command, run in app/consapp/convbin/gcc :
+build_command=make CFLAGS="-std=c99 -O3 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -I../../../../src -D_DARWIN_C_SOURCE -DTRACE -DENAGLO -DENAQZS -DENAGAL -DENACMP -DENAIRN -DNFREQ=4 -DNEXOBS=3"
+
+# Why the flags differ from the shipped makefile:
+#  -D_DARWIN_C_SOURCE is REQUIRED on macOS and is the only substantive change.
+#   src/rtkcmn.c begins with "#define _POSIX_C_SOURCE 199506", which restricts
+#   the macOS system headers to POSIX.1-1996. snprintf was introduced in C99
+#   and POSIX.1-2001, so the header correctly hides it and the build fails with
+#   "call to undeclared library function 'snprintf'". Defining _DARWIN_C_SOURCE
+#   restores the full Darwin namespace. This is a portability defect in RTKLIB
+#   on macOS, not a defect in the toolchain, and no RTKLIB source was modified.
+#  -Wno-unused-variable silences one warning in rtkcmn.c and affects nothing.
+# The RTKLIB source tree is otherwise untouched: verify with 'git status' in a
+# fresh clone at the commit above.
+
+sha256=caa25de7fc83f260d6fec05ac8fea0ef134fa90a942fa3bf04d1a9869f5d3206
