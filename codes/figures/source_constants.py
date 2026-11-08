@@ -2,13 +2,12 @@
 # module docstring below: a string placed first in a file, which Python keeps as the file's help text
 """
 Reads a constant out of an analysis script without running it, so that a figure shows the value the analysis used rather than a
-typed copy of it. figures_3_to_5.py takes the labels' departure distance, the window lengths, the environment's refractory period,
-pre-onset range, lags and state size, and the number of selected columns from the scripts themselves.
+typed copy of it. figures_3_and_4.py takes the labels' departure distance and the window lengths from the scripts themselves.
 
   module_const(path, name)          the value of a module-level constant (read from the syntax tree; the file is not run)
   source_regex(path, pattern)       the first group of a regular expression in a source file (a literal inside a code line)
   function_literal(path, f, v, i)   the i-th numeric literal assigned to v inside function f
-Usage   imported by codes/figures/figures_3_to_5.py
+Usage   imported by codes/figures/figures_3_and_4.py
 """
 
 from __future__ import annotations  # future import: type hints kept as text, so they cost nothing at run time

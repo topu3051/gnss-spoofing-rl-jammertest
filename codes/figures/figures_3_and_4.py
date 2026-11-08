@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # module docstring below: a string placed first in a file, which Python keeps as the file's help text
 """
-Figures 3 to 5, drawn from the data products in UTC with plain styling legible in print.
+Figures 3 and 4, drawn from the data products in UTC with plain styling legible in print.
 
 Figure 3  scheduled activity at the three test areas against the capture windows of the recorded tests. Test Area 1 and 2 entries
           are those the transmission plan schedules during a capture (ground_truth/concurrent_transmissions.csv), with their stated power; the
@@ -15,12 +15,9 @@ Both are context figures: the OBD-II speed and the receiver's own velocity are v
 
 Figure 4  test 2.6.5: final labels per second (pooled and per receiver), the L1 gains and the own-position distances (the label script's inputs).
 Windows (not in the thesis)  a schematic of the windows (no data).
-Figure 5  a schematic of the sequential detection problem of Section 4.10 (no data): step types and what each action costs, the two
-          state arms, and decision mode against stopping mode with the refractory mark; every number is read from codes/6_reinforcement_learning/01_environment.py.
 
-Usage   /opt/anaconda3/bin/python3 codes/figures/figures_3_to_5.py [rl]      (rl: only the Section 4.10 schematic)
-Writes  Graph/figure_3.png, Graph/figure_vehicle_speed_265.png, Graph/figure_4.png, Graph/figure_windows.png,
-        Graph/figure_5.png
+Usage   /opt/anaconda3/bin/python3 codes/figures/figures_3_and_4.py
+Writes  Graph/figure_3.png, Graph/figure_vehicle_speed_265.png, Graph/figure_4.png, Graph/figure_windows.png
 """
 
 from __future__ import annotations  # future import: type hints kept as text, so they cost nothing at run time
@@ -47,7 +44,6 @@ OUT2 = GRAPH / "figure_3.png"  # Figure 3 file
 OUT3 = GRAPH / "figure_vehicle_speed_265.png"  # the vehicle-speed figure's file (not in the thesis)
 OUT4 = GRAPH / "figure_4.png"  # Figure 4 file
 OUT5 = GRAPH / "figure_windows.png"  # the window schematic's file (not in the thesis)
-OUT_RL = GRAPH / "figure_5.png"  # the schematic of Section 4.10
 LAB_COLOR = {"clean": "#009E73", "attack_jam_spoof": "#7A0019", "attack_spoof": "#E69F00", "uncertain": "#C8C8C8", "excluded": "#404040"}  # dict: label -> colour (the label script's palette, readable in grey)
 LAB_NAME = {"clean": "clean", "attack_jam_spoof": "attack (jamming and spoofing)", "attack_spoof": "attack (spoofing)", "uncertain": "uncertain", "excluded": "excluded"}  # dict: label -> thesis name
 RX_NAME = {"SBF_02": "mosaic-X5", "SBF_03": "mosaic-H", "UBX_01": "u-blox 01"}  # dict: stream -> receiver name
@@ -60,7 +56,7 @@ def utc(text: str) -> pd.Timestamp:  # function: "2026-09-14 12:30:00" -> a time
     return pd.Timestamp(text)  # the products store UTC text without an offset, so no conversion is needed
 
 
-def figure2() -> None:  # function: draws Figure 2
+def figure2() -> None:  # function: draws Figure 3, the scheduled activity at the three test areas against the capture windows
     gt = pd.read_csv(PROC / "ground_truth" / "session_ground_truth.csv")  # one row per recorded test: scheduled and capture windows
     cc = pd.read_csv(PROC / "ground_truth" / "concurrent_transmissions.csv")  # entries at Test Areas 1 and 2 scheduled during a capture
     cc = cc.drop_duplicates("concurrent_test_code")  # one bar per entry, although some overlap two captures
@@ -121,7 +117,7 @@ def load_05a():  # function: loads codes/2_preprocessing/02_vehicle_motion.py as
     return mod  # the loaded module
 
 
-def figure3() -> None:  # function: draws Figure 3
+def figure3() -> None:  # function: draws the vehicle-speed figure of test 2.6.5 (not in the thesis)
     m = load_05a()  # the motion script's readers and its X5 cut-off (ONSET, read there from ground_truth/ta3_schedule_confirmation.csv)
     folder = next(f for code, f in m.sessions() if code == "2.6.5")  # generator with next(): the raw folder of 2.6.5
     obd = m.load_speed(folder)  # every SPEED row: UTC nanoseconds and km/h (invalid rows are NaN)
@@ -222,7 +218,7 @@ def figure4() -> None:  # function: draws Figure 4, the labels of 2.6.5 with the
     print(f"  wrote {OUT4.relative_to(PROJECT)}")  # one line for the run log
 
 
-def figure5() -> None:  # function: draws Figure 5, a schematic of the windows (no data: it states no result)
+def figure5() -> None:  # function: draws the schematic of the windows (not in the thesis; no data: it states no result)
     sys.path.insert(0, str(PROJECT / "codes" / "figures"))  # list method insert: codes/figures on the import path, for the constant reader
     from source_constants import module_const  # reads constants from the scripts without running them
     w_long = module_const("codes/5_baselines/01_logistic_regression.py", "W")  # the primary window length (the regression script's W, 10 s)
@@ -254,64 +250,11 @@ def figure5() -> None:  # function: draws Figure 5, a schematic of the windows (
     print(f"  wrote {OUT5.relative_to(PROJECT)}")  # one line for the run log
 
 
-def figure_rl() -> None:  # function: draws the schematic of the sequential detection problem of Section 4.10 (no data: it states no result)
-    sys.path.insert(0, str(PROJECT / "codes" / "figures"))  # list method insert: codes/figures on the import path, for the constant readers
-    from source_constants import module_const, source_regex  # reads constants and code literals without running the scripts
-    c11 = "codes/6_reinforcement_learning/01_environment.py"  # the environment script whose constants the drawing names
-    refr = module_const(c11, "REFRACTORY")  # the 30 s refractory period of stopping mode
-    pre_max, pre_min = module_const(c11, "PRE_MAX"), module_const(c11, "PRE_MIN")  # an onset episode starts 300 to 10 s before the onset
-    lags = module_const(c11, "LAGS")  # the primary state's windows end at t, t - 10 and t - 20 s
-    n_z = module_const(c11, "N_Z")  # the surrogate state's 30 log-odds
-    n_sel = module_const("codes/4_features/05_jamming_screen.py", "MI_K")  # the 36 selected columns per fold
-    cost1 = source_regex(c11, r"reward = -(\d)\.0  # one second of delay")  # a silent post-change second costs 1
-    fig, ax = plt.subplots(figsize=(6.3, 3.9))  # one axes for the whole schematic
-    spans = [(0, 10, "clean", "pre-change"), (10, 18, "uncertain", "uncertain"), (18, 34, "attack_spoof", "post-change (attack)")]  # list of (first cell, end, colour key, name) of the example stretch
-    for a, b, key, name in spans:  # for loop over the three stretches
-        for i in range(a, b):  # for loop over their seconds
-            ax.add_patch(plt.Rectangle((i, 3.0), 0.92, 0.45, color=LAB_COLOR[key], lw=0))  # one second as a coloured cell
-        ax.text((a + b) / 2, 3.22, name, ha="center", va="center", fontsize=7.5, color="white" if key == "clean" else "black")  # the stretch's name on its cells (white on green, black on grey and orange for contrast)
-    onset, end = 18, 34  # the onset and the end of the attack interval in the example (cell positions, not to scale)
-    ax.annotate("onset", xy=(onset, 3.0), xytext=(onset, 2.72), ha="center", fontsize=7.5, arrowprops={"arrowstyle": "->", "lw": 0.7})  # the onset marked below the cells
-    ax.plot([end, end], [2.95, 3.5], color="black", lw=0.8)  # the end of the attack interval
-    notes = [(5, "alarm: −λ,\nepisode ends"), (14, "alarm: recorded,\nno reward, continues"), (24, f"silent: −{cost1} per second\nalarm: no cost, episode ends"), (34, "silent to the end:\n−m")]  # list of (centre, text): what each action costs where (the first note on two lines, so it clears its neighbour at 7.5 pt)
-    for x, text in notes:  # for loop over the cost notes
-        ax.text(x, 3.62, text, ha="center", va="bottom", fontsize=7.5)  # the note above the cells
-    ax.annotate("", xy=(3, 2.82), xytext=(17, 2.82), arrowprops={"arrowstyle": "|-|", "lw": 0.7, "mutation_scale": 3})  # bracket: where onset episodes start
-    ax.text(10, 2.62, f"onset episodes start {pre_max} to {pre_min} s before the onset", ha="center", va="center", fontsize=7.5)  # its label
-    ax.text(-0.5, 2.15, "decision mode", ha="right", va="center", fontsize=7.5)  # row name: decision mode
-    for x in (13, 14, 15, 19, 20, 21, 22):  # for loop over the example's alarms, second by second
-        ax.plot([x + 0.46, x + 0.46], [2.0, 2.3], color="black", lw=1.0)  # one alarm mark per second in decision mode
-    ax.text(-0.5, 1.55, "stopping mode", ha="right", va="center", fontsize=7.5)  # row name: stopping mode
-    ax.add_patch(plt.Rectangle((13.92, 1.42), 6.0, 0.26, color="#DDDDDD", lw=0))  # the silent refractory period after the first event (not to scale)
-    ax.plot([13.46, 13.46], [1.38, 1.72], color="black", lw=1.6)  # the first alarm event, before the onset
-    ax.plot([20.38, 20.38], [1.38, 1.72], color="black", lw=1.6)  # the next event, the first one the stream can raise
-    ax.text(16.9, 1.55, f"{refr} s silent", ha="center", va="center", fontsize=7.5)  # the refractory period's label
-    ax.text(21.2, 1.55, "first event after the onset:\nrefractory at onset, no detection delay", ha="left", va="center", fontsize=7.5)  # what the mark means
-    for y in (2.15, 1.55):  # for loop over the two stream rows
-        ax.plot([0, 38], [y - 0.17, y - 0.17], color="#999999", lw=0.4)  # a faint time axis under each row
-    ax.plot([onset, onset], [1.35, 2.35], color="black", lw=0.6, ls=(0, (2, 2)))  # the onset carried down through both rows
-    boxes = [(0.0, f"primary state: the {n_sel} selected columns at the\nwindows ending at t, t − {lags[1]} s and t − {lags[2]} s\n({n_sel * len(lags)} values)"), (20.0, f"surrogate state: the last {n_z} log-odds of\nthe logistic regression and their\ncumulative sum Sₜ")]  # list of (left edge, text) of the two state boxes
-    for x, text in boxes:  # for loop over the state boxes
-        ax.add_patch(plt.Rectangle((x, 0.15), 18.0, 0.85, fill=False, lw=0.7))  # the box
-        ax.text(x + 9.0, 0.575, text, ha="center", va="center", fontsize=7.5)  # its text
-    ax.set_xlim(-6.5, 39)  # room for the row names on the left
-    ax.set_ylim(0.0, 4.25)  # room for the notes on top
-    ax.axis("off")  # no axes: a schematic
-    fig.subplots_adjust(left=0.01, right=0.99, top=0.99, bottom=0.01)  # fixed margins, so the PNG is byte-stable
-    fig.savefig(OUT_RL, dpi=300, metadata={"Software": None})  # PNG for print; no software tag
-    plt.close(fig)  # frees the figure
-    print(f"  wrote {OUT_RL.relative_to(PROJECT)}")  # one line for the run log
-
-
-def main() -> None:  # function: draws the four data figures and the schematics; with the argument "rl", only the schematic of Section 4.10
-    if sys.argv[1:] == ["rl"]:  # if: only the new schematic is asked for (the data figures read the raw files and are unchanged)
-        figure_rl()  # the schematic of Section 4.10
-        return  # nothing else
-    figure2()  # Figure 2
-    figure3()  # Figure 3
+def main() -> None:  # function: draws Figures 3 and 4 and the two figures that are not in the thesis (vehicle speed, windows)
+    figure2()  # Figure 3
+    figure3()  # the vehicle-speed figure (not in the thesis)
     figure4()  # Figure 4
-    figure5()  # Figure 5
-    figure_rl()  # the schematic of Section 4.10
+    figure5()  # the window schematic (not in the thesis)
 
 
 if __name__ == "__main__":  # if: run as a script, not imported

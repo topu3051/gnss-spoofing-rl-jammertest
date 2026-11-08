@@ -4,7 +4,7 @@ Code of the MSc thesis of Jamiual Amin Topu, University of Vaasa, 2026; supervis
 
 ## What the code does
 
-The code is the analysis from the raw receiver recordings of the Jammertest 2026 event to every number, table and figure of the thesis. It builds the ground truth (schedule, capture times, handsets, receiver status and gain), converts the receiver recordings to RINEX, and derives labels per receiver-second and window features from the observations. It fits two baselines, a logistic regression and a random forest, together with the sequential detectors CUSUM and k-of-n. It then trains a deep Q-network agent on the Shiryaev cost. It tests how the models transfer to the other receivers and to an unseen attack, and it measures detection delay and cost. A fixed seed, 20260914, is used throughout.
+The code is the analysis from the raw receiver recordings of the Jammertest 2026 event to every number and table of the thesis and to its data figures (Figures 3, 4 and 6 to 9). It builds the ground truth (schedule, capture times, handsets, receiver status and gain), converts the receiver recordings to RINEX, and derives labels per receiver-second and window features from the observations. It fits two baselines, a logistic regression and a random forest, together with the sequential detectors CUSUM and k-of-n. It then trains a deep Q-network agent on the Shiryaev cost. It tests how the models transfer to the other receivers and to an unseen attack, and it measures detection delay and cost. A fixed seed, 20260914, is used throughout.
 
 ## Repository layout
 
@@ -37,10 +37,10 @@ codes/
                              motion, the start positions of every receiver, the dependence of each receiver's labels on
                              the other receivers' evidence, the per-receiver label sensitivity, and every receiver at its
                              own reference position (its products, its RQ4 tables and the residual shift it causes)
-  figures/                   the scripts of Figures 1 to 9 (figure_7_own_receiver_positions.py draws Figure 7 as printed;
-                             figures_6_to_9.py also draws Figure 7 at the site positions, as figure_7_site_positions.png),
-                             and source_constants.py, which reads constants out of the scripts so a figure states the
-                             values the analysis used
+  figures/                   the scripts of Figures 3, 4 and 6 to 9 (figures_3_and_4.py; figure_7_own_receiver_positions.py
+                             draws Figure 7 as printed; figures_6_to_9.py also draws Figure 7 at the site positions, as
+                             figure_7_site_positions.png), and source_constants.py, which reads constants out of the
+                             scripts so a figure states the values the analysis used
   tests/                     the automated tests of the features, both baselines, the environment, the agents, transfer,
                              RQ4, the diagnosis and the scoring rules
 tools/convbin_build.txt      the build record of RTKLIB's convbin (see "RTKLIB convbin")
@@ -207,9 +207,7 @@ tests/
   codes/8_data_checks/06_own_receiver_positions_rq4.py                        about 2 minutes  the same carried to RQ4
   codes/8_data_checks/07_position_residual_shift.py                            under a minute  residual shift and check figures
 figures/
-  codes/figures/figure_1_receiver_chain.py                                     under a minute  Figure 1
-  codes/figures/figure_2_processing_chain.py                                   under a minute  Figure 2
-  codes/figures/figures_3_to_5.py                                              under a minute  Figures 3 to 5
+  codes/figures/figures_3_and_4.py                                             under a minute  Figures 3 and 4
   codes/figures/figures_6_to_9.py                                              under a minute  Figures 6, 8, 9
   codes/figures/figure_7_own_receiver_positions.py                             under a minute  Figure 7 as printed
 tests/
@@ -234,7 +232,7 @@ tests/
 - A fixed seed, 20260914, is used throughout.
 - The five agents are trained with the seeds 20260914 to 20260918 (thesis Table 9).
 - Every fitted step uses the training sessions of its fold only (thesis Tables 7 and 9).
-- Every table a script writes, every figure of the thesis and every trained model was reproduced byte for byte from a fresh copy of the thesis folder (`Thesis/README.txt` of the thesis folder). The exceptions it names are wall-clock timing tables, the start and end times in the sealed evaluations' read logs, two date lines in the RINEX headers, and the check images that carry the folder names in their titles; each is a property of the file and not of a result.
+- Every table a script writes, every data figure of the thesis (Figures 3, 4 and 6 to 9) and every trained model was reproduced byte for byte from a fresh copy of the thesis folder (`Thesis/README.txt` of the thesis folder). The exceptions it names are wall-clock timing tables, the start and end times in the sealed evaluations' read logs, two date lines in the RINEX headers, and the check images that carry the folder names in their titles; each is a property of the file and not of a result.
 
 ## Citation
 
