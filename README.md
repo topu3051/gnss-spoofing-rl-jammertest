@@ -232,7 +232,7 @@ tests/
 - A fixed seed, 20260914, is used throughout.
 - The five agents are trained with the seeds 20260914 to 20260918 (thesis Table 9).
 - Every fitted step uses the training sessions of its fold only (thesis Tables 7 and 9).
-- Every table a script writes, every data figure of the thesis (Figures 3, 4 and 6 to 9) and every trained model was reproduced byte for byte from a fresh copy of the thesis folder (`Thesis/README.txt` of the thesis folder). The exceptions it names are wall-clock timing tables, the start and end times in the sealed evaluations' read logs, two date lines in the RINEX headers, and the check images that carry the folder names in their titles; each is a property of the file and not of a result.
+- Every table a script writes, every data figure of the thesis (Figures 3, 4 and 6 to 9) and every trained model was reproduced byte for byte from a fresh copy of the analysis folder. The exceptions are wall-clock timing tables, the start and end times in the sealed evaluations' read logs, two date lines in the RINEX headers, and the check images that carry the folder names in their titles; each is a property of the file and not of a result.
 
 ## Citation
 
