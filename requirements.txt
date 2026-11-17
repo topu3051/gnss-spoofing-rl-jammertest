@@ -1,0 +1,11 @@
+# Python 3.13.9; every package at the version that ran the analysis
+gymnasium==1.3.0
+hatanaka==2.8.1
+matplotlib==3.10.6
+numpy==2.2.6
+pandas==2.3.3
+pypdf==6.17.0
+scipy==1.16.3
+scikit-learn==1.7.2
+stable-baselines3==2.9.0
+torch==2.14.0
